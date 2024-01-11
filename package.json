@@ -1,6 +1,6 @@
 {
   "name": "@wcpos/web-bundle",
-  "version": "1.4.0",
+  "version": "1.3",
   "description": "JS bundle for the WooCommerce POS web application - distributed by jsDelivr",
   "main": "metadata.json",
   "scripts": {
