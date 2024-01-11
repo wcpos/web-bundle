@@ -31,15 +31,15 @@ jobs:
           tag_name: ${{ steps.maybe-tag.outputs.tag }}
           draft: true
 
-      - name: Upload manifest.json
+      - name: Upload metadata.json
         if: ${{ success() && steps.maybe-tag.outputs.tag }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.maybe-release.outputs.upload_url }}
-          asset_path: ./manifest.json
-          asset_name: manifest.json
+          asset_path: ./metadata.json
+          asset_name: metadata.json
           asset_content_type: application/json
 
       - name: Upload Bundle Files
