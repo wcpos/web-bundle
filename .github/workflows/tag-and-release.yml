@@ -53,7 +53,9 @@ jobs:
           for file in ./bundles/*; do
             echo "Uploading ${file}..."
             FILE_NAME=$(basename "${file}")
-            gh release upload ${{ steps.maybe-release.outputs.tag }} "${file}" --repo wcpos/web-bundle --clobber
+            TAG_NAME=${{ steps.maybe-tag.outputs.tag }} # Ensure this is the correct tag output
+            echo "Tag: $TAG_NAME"
+            gh release upload "$TAG_NAME" "${file}" --repo wcpos/web-bundle --clobber
             if [ $? -ne 0 ]; then
               echo "Error uploading ${FILE_NAME}"
               exit 1
