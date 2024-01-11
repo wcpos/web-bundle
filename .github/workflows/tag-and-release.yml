@@ -50,7 +50,7 @@ jobs:
       - name: Upload Bundle Files
         if: ${{ success() && steps.maybe-tag.outputs.tag }}
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           for file in ./bundles/*; do
             echo "Uploading ${file}..."
