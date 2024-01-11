@@ -1,0 +1,48 @@
+name: Tag and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag-new-versions:
+    name: Tag
+    runs-on: ubuntu-latest
+    outputs:
+      id: ${{ steps.maybe-release.outputs.id }}
+      tag: ${{ steps.maybe-tag.outputs.tag }}
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Detect and Tag New Version
+        id: maybe-tag
+        uses: salsify/action-detect-and-tag-new-version@v2
+
+      - name: Create Release
+        id: maybe-release
+        if: ${{ success() && steps.maybe-tag.outputs.tag }}
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ steps.maybe-tag.outputs.tag }}
+          tag_name: ${{ steps.maybe-tag.outputs.tag }}
+          draft: true
+
+      - name: Upload manifest.json
+        if: ${{ success() && steps.maybe-tag.outputs.tag }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.maybe-release.outputs.upload_url }}
+          asset_path: ./path/to/your/manifest.json
+          asset_name: manifest.json
+          asset_content_type: application/json
+
+      - name: Upload Bundle Files
+        if: ${{ success() && steps.maybe-tag.outputs.tag }}
+        run: |
+          for file in ./bundles/*; do
+            curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: $(file -b --mime-type $file)" --data-binary @$file ${{ steps.maybe-release.outputs.upload_url }}?name=$(basename $file)
+          done
