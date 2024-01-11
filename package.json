@@ -1,0 +1,19 @@
+{
+  "name": "@wcpos/web-bundle",
+  "version": "1.4.0",
+  "description": "JS bundle for the WooCommerce POS web application - distributed by jsDelivr",
+  "main": "metadata.json",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wcpos/web-bundle.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wcpos/web-bundle/issues"
+  },
+  "homepage": "https://github.com/wcpos/web-bundle#readme"
+}
