@@ -49,10 +49,12 @@ jobs:
             echo "Uploading ${file}..."
             FILE_NAME=$(basename "${file}")
             MIME_TYPE=$(file -b --mime-type "${file}")
-            UPLOAD_URL="${{ steps.maybe-release.outputs.upload_url }}?name=${FILE_NAME}"
-            RESPONSE=$(curl --write-out "%{http_code}" --silent --output /dev/null -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: ${MIME_TYPE}" --data-binary @"${file}" "${UPLOAD_URL}")
+            UPLOAD_URL="${{ steps.maybe-release.outputs.upload_url }}&name=${FILE_NAME}"
+            echo "Upload URL: ${UPLOAD_URL}"
+            RESPONSE=$(curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: ${MIME_TYPE}" --data-binary @"${file}" "${UPLOAD_URL}" -w '%{http_code}' -s -o response.txt)
             if [ "$RESPONSE" -ne 201 ]; then
               echo "Error uploading ${FILE_NAME}: HTTP ${RESPONSE}"
+              cat response.txt
               exit 1
             fi
             echo "Uploaded ${FILE_NAME}"
