@@ -42,19 +42,20 @@ jobs:
           asset_name: metadata.json
           asset_content_type: application/json
 
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y gh
+
       - name: Upload Bundle Files
         if: ${{ success() && steps.maybe-tag.outputs.tag }}
         run: |
           for file in ./bundles/*; do
             echo "Uploading ${file}..."
             FILE_NAME=$(basename "${file}")
-            MIME_TYPE=$(file -b --mime-type "${file}")
-            UPLOAD_URL="${{ steps.maybe-release.outputs.upload_url }}&name=${FILE_NAME}"
-            echo "Upload URL: ${UPLOAD_URL}"
-            RESPONSE=$(curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: ${MIME_TYPE}" --data-binary @"${file}" "${UPLOAD_URL}" -w '%{http_code}' -s -o response.txt)
-            if [ "$RESPONSE" -ne 201 ]; then
-              echo "Error uploading ${FILE_NAME}: HTTP ${RESPONSE}"
-              cat response.txt
+            gh release upload ${{ steps.maybe-release.outputs.tag }} "${file}" --repo wcpos/web-bundle --clobber
+            if [ $? -ne 0 ]; then
+              echo "Error uploading ${FILE_NAME}"
               exit 1
             fi
             echo "Uploaded ${FILE_NAME}"
