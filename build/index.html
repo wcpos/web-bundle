@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>WooCommerce POS</title>
+    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
+    <style id="expo-reset">
+      /* These styles make the body full-height */
+      html,
+      body {
+        height: 100%;
+      }
+      /* These styles disable body scrolling if you are using <ScrollView> */
+      body {
+        overflow: hidden;
+      }
+      /* These styles make the root element full-height */
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+    </style>
+    <script>
+      // only define idbWorker when _not_ running under Electron
+      if (!navigator.userAgent.includes('Electron')) {
+        window.idbWorker = '/indexeddb.worker.js';
+      }
+    </script>
+  <link rel="preload" href="/__WCPOS_BASEURL_PLACEHOLDER_1753808250921_bmxrhyr2zvh__/_expo/static/css/web-7dfb91ce76ebc921686f5af05968738d.css" as="style"><link rel="stylesheet" href="/__WCPOS_BASEURL_PLACEHOLDER_1753808250921_bmxrhyr2zvh__/_expo/static/css/web-7dfb91ce76ebc921686f5af05968738d.css"><link rel="icon" href="/__WCPOS_BASEURL_PLACEHOLDER_1753808250921_bmxrhyr2zvh__/favicon.ico" /></head>
+
+  <body>
+    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <!-- The root element for your Expo app. -->
+    <div id="root"></div>
+  <script src="/__WCPOS_BASEURL_PLACEHOLDER_1753808250921_bmxrhyr2zvh__/_expo/static/js/web/entry-f162cb27734b2db06ca41e937ac85589.js" defer></script>
+</body>
+</html>

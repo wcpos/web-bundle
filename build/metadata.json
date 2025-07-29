@@ -1,0 +1,10 @@
+{
+  "version": 0,
+  "bundler": "metro",
+  "fileMetadata": {
+    "web": {
+      "bundle": "_expo/static/js/web/entry-f162cb27734b2db06ca41e937ac85589.js",
+      "css": "_expo/static/css/web-7dfb91ce76ebc921686f5af05968738d.css"
+    }
+  }
+}

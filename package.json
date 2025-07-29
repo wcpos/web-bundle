@@ -1,9 +1,11 @@
 {
   "name": "@wcpos/web-bundle",
-  "version": "1.7.21",
+  "version": "1.8.0",
   "description": "JS bundle for the WooCommerce POS web application - distributed by jsDelivr",
   "main": "metadata.json",
   "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node scripts/dev-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
