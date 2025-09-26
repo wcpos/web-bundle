@@ -1,1 +1,4 @@
 .DS_Store
+.turbo
+build/atlas.jsonl
+build/indexeddb.worker.js

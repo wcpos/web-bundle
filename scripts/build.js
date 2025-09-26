@@ -106,16 +106,24 @@ function replaceChunkReferences(buildDir) {
 
 		if (content !== originalContent) {
 			fs.writeFileSync(filePath, content);
-			
+
 			// Count all types of replacements
-			const placeholderExpoReplacements = (originalContent.match(new RegExp(`"${escapedPlaceholder}\\/_expo`, 'g')) || []).length;
-			const placeholderAssetsReplacements = (originalContent.match(new RegExp(`"${escapedPlaceholder}\\/assets`, 'g')) || []).length;
-			const oldPatternReplacements = (originalContent.match(/"\/_expo\/static\/js\/web\//g) || []).length;
-			
-			const fileReplacements = placeholderExpoReplacements + placeholderAssetsReplacements + oldPatternReplacements;
+			const placeholderExpoReplacements = (
+				originalContent.match(new RegExp(`"${escapedPlaceholder}\\/_expo`, 'g')) || []
+			).length;
+			const placeholderAssetsReplacements = (
+				originalContent.match(new RegExp(`"${escapedPlaceholder}\\/assets`, 'g')) || []
+			).length;
+			const oldPatternReplacements = (originalContent.match(/"\/_expo\/static\/js\/web\//g) || [])
+				.length;
+
+			const fileReplacements =
+				placeholderExpoReplacements + placeholderAssetsReplacements + oldPatternReplacements;
 			totalReplacements += fileReplacements;
-			
-			log(`Updated ${file}: ${placeholderExpoReplacements} _expo, ${placeholderAssetsReplacements} assets, ${oldPatternReplacements} old pattern references replaced`);
+
+			log(
+				`Updated ${file}: ${placeholderExpoReplacements} _expo, ${placeholderAssetsReplacements} assets, ${oldPatternReplacements} old pattern references replaced`
+			);
 		}
 	}
 
@@ -206,7 +214,7 @@ async function build() {
 		// Clean any previous web-build in main app
 		cleanDirectory(WEB_BUILD_DIR);
 
-		log('Running expo export...');
+		log('Running expo export with Atlas enabled...');
 		// Run expo export from the main app directory with environment variables
 		process.chdir(MAIN_APP_DIR);
 
@@ -214,12 +222,49 @@ async function build() {
 		const env = {
 			...process.env,
 			WCPOS_BASEURL_PLACEHOLDER: UNIQUE_BASEURL_PLACEHOLDER,
+			EXPO_UNSTABLE_ATLAS: 'true',
+			// Ensure Atlas debugging is enabled
+			DEBUG: 'expo:atlas*',
 		};
 
-		execSync('expo export --output-dir ./web-build --platform=web', {
-			stdio: 'inherit',
-			env: env,
-		});
+		log('Environment variables set:');
+		log(`EXPO_UNSTABLE_ATLAS: ${env.EXPO_UNSTABLE_ATLAS}`);
+		log(`DEBUG: ${env.DEBUG}`);
+
+		try {
+			execSync('npx expo export --output-dir ./web-build --platform=web', {
+				stdio: 'inherit',
+				env: env,
+			});
+		} catch (error) {
+			log(`Expo export failed: ${error.message}`);
+			throw error;
+		}
+
+		// Check if Atlas files were generated and copy them
+		log('Checking for Atlas output files...');
+		const atlasFiles = [
+			'.expo/atlas.jsonl',
+			'atlas.jsonl',
+			'_expo/atlas.jsonl',
+			'web-build/atlas.jsonl',
+		];
+		let atlasFound = false;
+		const foundAtlasFiles = [];
+
+		for (const atlasFile of atlasFiles) {
+			const atlasPath = path.join(MAIN_APP_DIR, atlasFile);
+			if (fs.existsSync(atlasPath)) {
+				log(`✓ Atlas file found: ${atlasPath}`);
+				atlasFound = true;
+				foundAtlasFiles.push(atlasPath);
+			}
+		}
+
+		if (!atlasFound) {
+			log('⚠️  No Atlas files found in expected locations');
+			log('Atlas may not have been properly generated');
+		}
 
 		// Return to web app directory
 		process.chdir(ROOT_DIR);
@@ -227,6 +272,21 @@ async function build() {
 		log('Copying build files...');
 		// Copy built files to our build directory
 		copyDirectory(WEB_BUILD_DIR, BUILD_DIR);
+
+		// Copy Atlas files if found
+		if (foundAtlasFiles.length > 0) {
+			log('Copying Atlas files...');
+			for (const atlasFile of foundAtlasFiles) {
+				const fileName = path.basename(atlasFile);
+				const destPath = path.join(BUILD_DIR, fileName);
+				try {
+					fs.copyFileSync(atlasFile, destPath);
+					log(`✓ Copied Atlas file: ${fileName} → ${destPath}`);
+				} catch (error) {
+					log(`Failed to copy Atlas file ${fileName}: ${error.message}`);
+				}
+			}
+		}
 
 		log('Processing chunk references...');
 		// Set the placeholder in environment for both replacement functions
