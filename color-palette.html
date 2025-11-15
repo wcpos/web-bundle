@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Palette - POS System</title>
+    <style>
+        /* Embedded color variables from global.css */
+        :root {
+            /* Base Color Scales (Polaris-inspired) */
+            
+            /* Gray scale - for neutrals and UI structure */
+            --color-gray-1: oklch(0.99 0 0);
+            --color-gray-2: oklch(0.98 0 0);
+            --color-gray-3: oklch(0.97 0 0);
+            --color-gray-4: oklch(0.95 0 0);
+            --color-gray-5: oklch(0.93 0 0);
+            --color-gray-6: oklch(0.90 0 0);
+            --color-gray-7: oklch(0.85 0 0);
+            --color-gray-8: oklch(0.78 0 0);
+            --color-gray-9: oklch(0.70 0 0);
+            --color-gray-10: oklch(0.60 0 0);
+            --color-gray-11: oklch(0.50 0 0);
+            --color-gray-12: oklch(0.40 0 0);
+            --color-gray-13: oklch(0.32 0 0);
+            --color-gray-14: oklch(0.25 0 0);
+            --color-gray-15: oklch(0.18 0 0);
+            --color-gray-16: oklch(0.10 0 0);
+            
+            /* Blue scale - for primary/brand actions */
+            --color-blue-1: oklch(0.98 0.01 237);
+            --color-blue-2: oklch(0.96 0.02 237);
+            --color-blue-3: oklch(0.94 0.04 237);
+            --color-blue-4: oklch(0.90 0.06 237);
+            --color-blue-5: oklch(0.85 0.09 237);
+            --color-blue-6: oklch(0.78 0.13 237);
+            --color-blue-7: oklch(0.70 0.17 237);
+            --color-blue-8: oklch(0.62 0.20 237);
+            --color-blue-9: oklch(0.55 0.22 237);
+            --color-blue-10: oklch(0.48 0.21 237);
+            --color-blue-11: oklch(0.42 0.19 237);
+            --color-blue-12: oklch(0.36 0.17 237);
+            --color-blue-13: oklch(0.30 0.14 237);
+            --color-blue-14: oklch(0.24 0.11 237);
+            --color-blue-15: oklch(0.18 0.08 237);
+            --color-blue-16: oklch(0.12 0.05 237);
+            
+            /* Green scale - for success states */
+            --color-green-1: oklch(0.98 0.01 142);
+            --color-green-2: oklch(0.96 0.02 142);
+            --color-green-3: oklch(0.94 0.04 142);
+            --color-green-4: oklch(0.90 0.07 142);
+            --color-green-5: oklch(0.85 0.10 142);
+            --color-green-6: oklch(0.78 0.14 142);
+            --color-green-7: oklch(0.70 0.17 142);
+            --color-green-8: oklch(0.62 0.19 142);
+            --color-green-9: oklch(0.54 0.20 142);
+            --color-green-10: oklch(0.47 0.19 142);
+            --color-green-11: oklch(0.40 0.17 142);
+            --color-green-12: oklch(0.34 0.15 142);
+            --color-green-13: oklch(0.28 0.12 142);
+            --color-green-14: oklch(0.22 0.09 142);
+            --color-green-15: oklch(0.16 0.06 142);
+            --color-green-16: oklch(0.10 0.03 142);
+            
+            /* Red scale - for errors and critical states */
+            --color-red-1: oklch(0.98 0.01 25);
+            --color-red-2: oklch(0.96 0.02 25);
+            --color-red-3: oklch(0.94 0.04 25);
+            --color-red-4: oklch(0.90 0.07 25);
+            --color-red-5: oklch(0.85 0.11 25);
+            --color-red-6: oklch(0.78 0.16 25);
+            --color-red-7: oklch(0.70 0.20 25);
+            --color-red-8: oklch(0.62 0.23 25);
+            --color-red-9: oklch(0.54 0.24 25);
+            --color-red-10: oklch(0.47 0.23 25);
+            --color-red-11: oklch(0.40 0.20 25);
+            --color-red-12: oklch(0.34 0.17 25);
+            --color-red-13: oklch(0.28 0.14 25);
+            --color-red-14: oklch(0.22 0.11 25);
+            --color-red-15: oklch(0.16 0.08 25);
+            --color-red-16: oklch(0.10 0.05 25);
+            
+            /* Yellow scale - for warnings */
+            --color-yellow-1: oklch(0.98 0.01 85);
+            --color-yellow-2: oklch(0.96 0.03 85);
+            --color-yellow-3: oklch(0.94 0.06 85);
+            --color-yellow-4: oklch(0.90 0.10 85);
+            --color-yellow-5: oklch(0.85 0.14 85);
+            --color-yellow-6: oklch(0.78 0.18 85);
+            --color-yellow-7: oklch(0.70 0.20 85);
+            --color-yellow-8: oklch(0.62 0.21 85);
+            --color-yellow-9: oklch(0.54 0.20 85);
+            --color-yellow-10: oklch(0.47 0.18 85);
+            --color-yellow-11: oklch(0.40 0.15 85);
+            --color-yellow-12: oklch(0.34 0.12 85);
+            --color-yellow-13: oklch(0.28 0.09 85);
+            --color-yellow-14: oklch(0.22 0.07 85);
+            --color-yellow-15: oklch(0.16 0.05 85);
+            --color-yellow-16: oklch(0.10 0.03 85);
+            
+            /* Purple scale - for special/magic states */
+            --color-purple-1: oklch(0.98 0.01 300);
+            --color-purple-2: oklch(0.96 0.02 300);
+            --color-purple-3: oklch(0.94 0.04 300);
+            --color-purple-4: oklch(0.90 0.07 300);
+            --color-purple-5: oklch(0.85 0.10 300);
+            --color-purple-6: oklch(0.78 0.14 300);
+            --color-purple-7: oklch(0.70 0.18 300);
+            --color-purple-8: oklch(0.62 0.21 300);
+            --color-purple-9: oklch(0.54 0.23 300);
+            --color-purple-10: oklch(0.47 0.22 300);
+            --color-purple-11: oklch(0.40 0.20 300);
+            --color-purple-12: oklch(0.34 0.17 300);
+            --color-purple-13: oklch(0.28 0.14 300);
+            --color-purple-14: oklch(0.22 0.11 300);
+            --color-purple-15: oklch(0.16 0.08 300);
+            --color-purple-16: oklch(0.10 0.05 300);
+            
+            /* Color Role Tokens (Polaris-inspired) */
+            
+            /* Default role - baseline UI colors */
+            --color-bg-surface: var(--color-gray-2);
+            --color-bg-surface-secondary: var(--color-gray-3);
+            --color-bg-surface-tertiary: var(--color-gray-4);
+            --color-bg-surface-disabled: var(--color-gray-4);
+            --color-bg-fill: var(--color-gray-7);
+            --color-bg-fill-secondary: var(--color-gray-8);
+            --color-bg-fill-tertiary: var(--color-gray-11);
+            --color-bg-fill-disabled: var(--color-gray-6);
+            --color-text: var(--color-gray-15);
+            --color-text-secondary: var(--color-gray-13);
+            --color-text-disabled: var(--color-gray-10);
+            --color-text-on-fill: var(--color-gray-1);
+            --color-icon: var(--color-gray-12);
+            --color-icon-secondary: var(--color-gray-10);
+            --color-icon-disabled: var(--color-gray-8);
+            --color-border: var(--color-gray-7);
+            --color-border-secondary: var(--color-gray-6);
+            --color-border-disabled: var(--color-gray-5);
+            
+            /* Brand/Primary role - main actions */
+            --color-bg-fill-brand: var(--color-blue-9);
+            --color-bg-fill-brand-hover: var(--color-blue-10);
+            --color-bg-fill-brand-active: var(--color-blue-11);
+            --color-bg-fill-brand-disabled: var(--color-blue-6);
+            --color-bg-surface-brand: var(--color-blue-3);
+            --color-text-brand: var(--color-blue-11);
+            --color-text-brand-hover: var(--color-blue-12);
+            --color-text-on-brand: var(--color-gray-1);
+            --color-icon-brand: var(--color-blue-10);
+            --color-border-brand: var(--color-blue-8);
+            
+            /* Success role */
+            --color-bg-fill-success: var(--color-green-9);
+            --color-bg-fill-success-hover: var(--color-green-10);
+            --color-bg-fill-success-active: var(--color-green-11);
+            --color-bg-surface-success: var(--color-green-3);
+            --color-bg-surface-success-hover: var(--color-green-4);
+            --color-bg-surface-success-active: var(--color-green-5);
+            --color-text-success: var(--color-green-14);
+            --color-text-on-success: var(--color-gray-1);
+            --color-icon-success: var(--color-green-12);
+            --color-border-success: var(--color-green-8);
+            
+            /* Critical/Error role */
+            --color-bg-fill-critical: var(--color-red-9);
+            --color-bg-fill-critical-hover: var(--color-red-10);
+            --color-bg-fill-critical-active: var(--color-red-11);
+            --color-bg-surface-critical: var(--color-red-3);
+            --color-bg-surface-critical-hover: var(--color-red-4);
+            --color-bg-surface-critical-active: var(--color-red-5);
+            --color-text-critical: var(--color-red-14);
+            --color-text-on-critical: var(--color-gray-1);
+            --color-icon-critical: var(--color-red-12);
+            --color-border-critical: var(--color-red-8);
+            
+            /* Warning role */
+            --color-bg-fill-warning: var(--color-yellow-9);
+            --color-bg-fill-warning-hover: var(--color-yellow-10);
+            --color-bg-fill-warning-active: var(--color-yellow-11);
+            --color-bg-surface-warning: var(--color-yellow-3);
+            --color-bg-surface-warning-hover: var(--color-yellow-4);
+            --color-bg-surface-warning-active: var(--color-yellow-5);
+            --color-text-warning: var(--color-yellow-14);
+            --color-text-on-warning: var(--color-gray-1);
+            --color-icon-warning: var(--color-yellow-12);
+            --color-border-warning: var(--color-yellow-8);
+            
+            /* Info role */
+            --color-bg-fill-info: var(--color-blue-8);
+            --color-bg-fill-info-hover: var(--color-blue-9);
+            --color-bg-fill-info-active: var(--color-blue-10);
+            --color-bg-surface-info: var(--color-blue-2);
+            --color-bg-surface-info-hover: var(--color-blue-3);
+            --color-bg-surface-info-active: var(--color-blue-4);
+            --color-text-info: var(--color-blue-13);
+            --color-text-on-info: var(--color-gray-1);
+            --color-icon-info: var(--color-blue-11);
+            --color-border-info: var(--color-blue-7);
+            
+            /* Magic role */
+            --color-bg-fill-magic: var(--color-purple-9);
+            --color-bg-surface-magic: var(--color-purple-3);
+            --color-text-magic: var(--color-purple-14);
+            --color-text-on-magic: var(--color-gray-1);
+            --color-icon-magic: var(--color-purple-12);
+            --color-border-magic: var(--color-purple-8);
+        }
+        
+        /* Dark mode overrides */
+        .dark {
+            /* Invert the color scales for dark mode */
+            --color-bg-surface: var(--color-gray-15);
+            --color-bg-surface-secondary: var(--color-gray-14);
+            --color-bg-surface-tertiary: var(--color-gray-13);
+            --color-bg-surface-disabled: var(--color-gray-13);
+            --color-bg-fill: var(--color-gray-11);
+            --color-bg-fill-secondary: var(--color-gray-10);
+            --color-bg-fill-tertiary: var(--color-gray-8);
+            --color-bg-fill-disabled: var(--color-gray-12);
+            --color-text: var(--color-gray-2);
+            --color-text-secondary: var(--color-gray-4);
+            --color-text-disabled: var(--color-gray-8);
+            --color-text-on-fill: var(--color-gray-16);
+            --color-icon: var(--color-gray-4);
+            --color-icon-secondary: var(--color-gray-6);
+            --color-icon-disabled: var(--color-gray-10);
+            --color-border: var(--color-gray-11);
+            --color-border-secondary: var(--color-gray-12);
+            --color-border-disabled: var(--color-gray-13);
+            
+            /* Adjust role colors for dark mode */
+            --color-bg-surface-brand: var(--color-blue-13);
+            --color-bg-surface-success: var(--color-green-14);
+            --color-bg-surface-critical: var(--color-red-14);
+            --color-bg-surface-warning: var(--color-yellow-14);
+            --color-bg-surface-info: var(--color-blue-14);
+            --color-bg-surface-magic: var(--color-purple-14);
+            
+            --color-text-brand: var(--color-blue-6);
+            --color-text-success: var(--color-green-6);
+            --color-text-critical: var(--color-red-6);
+            --color-text-warning: var(--color-yellow-6);
+            --color-text-info: var(--color-blue-5);
+            --color-text-magic: var(--color-purple-6);
+            
+            --color-icon-brand: var(--color-blue-7);
+            --color-icon-success: var(--color-green-7);
+            --color-icon-critical: var(--color-red-7);
+            --color-icon-warning: var(--color-yellow-7);
+            --color-icon-info: var(--color-blue-6);
+            --color-icon-magic: var(--color-purple-7);
+        }
+        
+        /* Base styles */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--color-bg-surface);
+            color: var(--color-text);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        h2 {
+            font-size: 1.875rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .description {
+            color: var(--color-text-secondary);
+            margin-bottom: 3rem;
+        }
+        
+        /* Color Scale Grid */
+        .color-scale {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 8px;
+            margin-bottom: 3rem;
+        }
+        
+        .color-swatch {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+        
+        .color-swatch:hover {
+            transform: scale(1.05);
+        }
+        
+        .color-swatch-label {
+            position: absolute;
+            bottom: -20px;
+            font-size: 0.625rem;
+            color: var(--color-text-secondary);
+        }
+        
+        /* Color Role Examples */
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 3rem;
+        }
+        
+        .role-card {
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 20px;
+            background: var(--color-bg-surface-secondary);
+        }
+        
+        .role-card h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+        
+        /* Component Examples */
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 2rem;
+        }
+        
+        .button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .button:hover {
+            filter: brightness(0.9);
+        }
+        
+        .banner {
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid;
+            margin-bottom: 8px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        
+        .toggle-button {
+            padding: 8px 16px;
+            background: var(--color-bg-fill);
+            color: var(--color-text-on-fill);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        /* Utilities */
+        .flex {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .mt-4 { margin-top: 1rem; }
+        .mb-4 { margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle">
+        <button class="toggle-button" onclick="toggleTheme()">Toggle Dark Mode</button>
+    </div>
+    
+    <div class="container">
+        <h1>Color Palette</h1>
+        <p class="description">
+            A comprehensive color system inspired by Shopify Polaris, designed for POS applications.
+            Click any color to copy its value.
+        </p>
+        
+        <!-- Color Scales -->
+        <section>
+            <h2>Base Color Scales</h2>
+            
+            <h3>Gray</h3>
+            <div class="color-scale" id="gray-scale"></div>
+            
+            <h3>Blue (Primary/Brand)</h3>
+            <div class="color-scale" id="blue-scale"></div>
+            
+            <h3>Green (Success)</h3>
+            <div class="color-scale" id="green-scale"></div>
+            
+            <h3>Red (Critical/Error)</h3>
+            <div class="color-scale" id="red-scale"></div>
+            
+            <h3>Yellow (Warning)</h3>
+            <div class="color-scale" id="yellow-scale"></div>
+            
+            <h3>Purple (Magic/Special)</h3>
+            <div class="color-scale" id="purple-scale"></div>
+        </section>
+        
+        <!-- Color Roles -->
+        <section>
+            <h2>Color Roles</h2>
+            
+            <div class="role-grid">
+                <!-- Default Role -->
+                <div class="role-card">
+                    <h4>Default</h4>
+                    <div class="mb-4">
+                        <div style="background: var(--color-bg-surface); padding: 8px; border: 1px solid var(--color-border); border-radius: 4px;">
+                            <p style="margin: 0; color: var(--color-text);">Default text on surface</p>
+                            <p style="margin: 0; color: var(--color-text-secondary);">Secondary text</p>
+                        </div>
+                    </div>
+                    <button class="button" style="background: var(--color-bg-fill); color: var(--color-text-on-fill);">
+                        Default Button
+                    </button>
+                </div>
+                
+                <!-- Brand Role -->
+                <div class="role-card">
+                    <h4>Brand/Primary</h4>
+                    <div class="mb-4" style="background: var(--color-bg-surface-brand); padding: 8px; border: 1px solid var(--color-border-brand); border-radius: 4px;">
+                        <p style="margin: 0; color: var(--color-text-brand);">Brand surface with brand text</p>
+                    </div>
+                    <button class="button" style="background: var(--color-bg-fill-brand); color: var(--color-text-on-brand);">
+                        Primary Action
+                    </button>
+                </div>
+                
+                <!-- Success Role -->
+                <div class="role-card">
+                    <h4>Success</h4>
+                    <div class="mb-4" style="background: var(--color-bg-surface-success); padding: 8px; border: 1px solid var(--color-border-success); border-radius: 4px;">
+                        <p style="margin: 0; color: var(--color-text-success);">Success message on surface</p>
+                    </div>
+                    <button class="button" style="background: var(--color-bg-fill-success); color: var(--color-text-on-success);">
+                        Save Changes
+                    </button>
+                </div>
+                
+                <!-- Critical Role -->
+                <div class="role-card">
+                    <h4>Critical/Error</h4>
+                    <div class="mb-4" style="background: var(--color-bg-surface-critical); padding: 8px; border: 1px solid var(--color-border-critical); border-radius: 4px;">
+                        <p style="margin: 0; color: var(--color-text-critical);">Error message on surface</p>
+                    </div>
+                    <button class="button" style="background: var(--color-bg-fill-critical); color: var(--color-text-on-critical);">
+                        Delete Item
+                    </button>
+                </div>
+                
+                <!-- Warning Role -->
+                <div class="role-card">
+                    <h4>Warning</h4>
+                    <div class="mb-4" style="background: var(--color-bg-surface-warning); padding: 8px; border: 1px solid var(--color-border-warning); border-radius: 4px;">
+                        <p style="margin: 0; color: var(--color-text-warning);">Warning message on surface</p>
+                    </div>
+                    <button class="button" style="background: var(--color-bg-fill-warning); color: var(--color-text-on-warning);">
+                        Proceed with Caution
+                    </button>
+                </div>
+                
+                <!-- Info Role -->
+                <div class="role-card">
+                    <h4>Info</h4>
+                    <div class="mb-4" style="background: var(--color-bg-surface-info); padding: 8px; border: 1px solid var(--color-border-info); border-radius: 4px;">
+                        <p style="margin: 0; color: var(--color-text-info);">Informational message</p>
+                    </div>
+                    <button class="button" style="background: var(--color-bg-fill-info); color: var(--color-text-on-info);">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Component Examples -->
+        <section>
+            <h2>Component Examples</h2>
+            
+            <h3>Buttons</h3>
+            <div class="flex mb-4">
+                <button class="button" style="background: var(--color-bg-fill-brand); color: var(--color-text-on-brand);">
+                    Process Payment
+                </button>
+                <button class="button" style="background: var(--color-bg-fill); color: var(--color-text-on-fill);">
+                    Cancel
+                </button>
+                <button class="button" style="background: var(--color-bg-fill-success); color: var(--color-text-on-success);">
+                    Complete Order
+                </button>
+                <button class="button" style="background: var(--color-bg-fill-critical); color: var(--color-text-on-critical);">
+                    Void Transaction
+                </button>
+                <button class="button" style="background: var(--color-bg-fill-disabled); color: var(--color-text-disabled);" disabled>
+                    Disabled
+                </button>
+            </div>
+            
+            <h3>Banners</h3>
+            <div class="banner" style="background: var(--color-bg-surface-success); color: var(--color-text-success); border-color: var(--color-border-success);">
+                ✓ Order completed successfully
+            </div>
+            <div class="banner" style="background: var(--color-bg-surface-warning); color: var(--color-text-warning); border-color: var(--color-border-warning);">
+                ⚠ Low inventory for this item
+            </div>
+            <div class="banner" style="background: var(--color-bg-surface-critical); color: var(--color-text-critical); border-color: var(--color-border-critical);">
+                ✕ Payment declined
+            </div>
+            <div class="banner" style="background: var(--color-bg-surface-info); color: var(--color-text-info); border-color: var(--color-border-info);">
+                ℹ New features available
+            </div>
+            
+            <h3>Badges</h3>
+            <div class="flex mb-4">
+                <span class="badge" style="background: var(--color-bg-fill); color: var(--color-text-on-fill);">Default</span>
+                <span class="badge" style="background: var(--color-bg-surface-brand); color: var(--color-text-brand);">New</span>
+                <span class="badge" style="background: var(--color-bg-surface-success); color: var(--color-text-success);">Paid</span>
+                <span class="badge" style="background: var(--color-bg-surface-warning); color: var(--color-text-warning);">Pending</span>
+                <span class="badge" style="background: var(--color-bg-surface-critical); color: var(--color-text-critical);">Overdue</span>
+                <span class="badge" style="background: var(--color-bg-surface-info); color: var(--color-text-info);">Info</span>
+            </div>
+            
+            <h3>Form Elements</h3>
+            <div class="component-grid">
+                <div>
+                    <label style="display: block; margin-bottom: 4px; color: var(--color-text-secondary);">Text Input</label>
+                    <input type="text" placeholder="Enter text" style="
+                        width: 100%;
+                        padding: 8px 12px;
+                        border: 1px solid var(--color-border);
+                        border-radius: 6px;
+                        background: var(--color-bg-surface-secondary);
+                        color: var(--color-text);
+                    ">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 4px; color: var(--color-text-secondary);">Error State</label>
+                    <input type="text" placeholder="Invalid input" style="
+                        width: 100%;
+                        padding: 8px 12px;
+                        border: 1px solid var(--color-border-critical);
+                        border-radius: 6px;
+                        background: var(--color-bg-surface-critical);
+                        color: var(--color-text);
+                    ">
+                </div>
+            </div>
+        </section>
+        
+        <!-- Color Values Display -->
+        <section>
+            <h2>Color Values</h2>
+            <div id="color-values" style="
+                background: var(--color-bg-surface-secondary);
+                padding: 20px;
+                border-radius: 8px;
+                font-family: monospace;
+                font-size: 0.875rem;
+                max-height: 400px;
+                overflow-y: auto;
+            "></div>
+        </section>
+    </div>
+    
+    <script>
+        // Generate color swatches
+        function createColorSwatch(color, value, label) {
+            const swatch = document.createElement('div');
+            swatch.className = 'color-swatch';
+            swatch.style.backgroundColor = value;
+            
+            // Determine text color based on background
+            const rgb = getComputedStyle(swatch).backgroundColor;
+            const brightness = getBrightness(rgb);
+            swatch.style.color = brightness > 0.5 ? 'black' : 'white';
+            
+            swatch.innerHTML = `<span class="color-swatch-label">${label}</span>`;
+            swatch.title = `${color}: ${value}`;
+            swatch.onclick = () => copyToClipboard(value);
+            
+            return swatch;
+        }
+        
+        // Calculate brightness
+        function getBrightness(rgb) {
+            const match = rgb.match(/\d+/g);
+            if (!match) return 0;
+            const [r, g, b] = match.map(Number);
+            return (r * 299 + g * 587 + b * 114) / 1000 / 255;
+        }
+        
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.createElement('div');
+                toast.textContent = 'Copied!';
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: var(--color-bg-fill-success);
+                    color: var(--color-text-on-success);
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    z-index: 1000;
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+            });
+        }
+        
+        // Toggle theme
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+        }
+        
+        // Generate color scales
+        function generateColorScales() {
+            const scales = ['gray', 'blue', 'green', 'red', 'yellow', 'purple'];
+            
+            scales.forEach(scale => {
+                const container = document.getElementById(`${scale}-scale`);
+                for (let i = 1; i <= 16; i++) {
+                    const varName = `--color-${scale}-${i}`;
+                    const value = getComputedStyle(document.documentElement).getPropertyValue(varName);
+                    if (value) {
+                        container.appendChild(createColorSwatch(varName, `var(${varName})`, i));
+                    }
+                }
+            });
+        }
+        
+        // Display all color variables
+        function displayColorValues() {
+            const container = document.getElementById('color-values');
+            const styles = getComputedStyle(document.documentElement);
+            const colorVars = [];
+            
+            // Get all CSS variables
+            for (const prop of styles) {
+                if (prop.startsWith('--color-')) {
+                    const value = styles.getPropertyValue(prop);
+                    colorVars.push(`${prop}: ${value};`);
+                }
+            }
+            
+            container.innerHTML = `<pre>${colorVars.join('\n')}</pre>`;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            generateColorScales();
+            displayColorValues();
+        });
+    </script>
+</body>
+</html>

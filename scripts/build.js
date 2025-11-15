@@ -214,7 +214,20 @@ async function build() {
 		// Clean any previous web-build in main app
 		cleanDirectory(WEB_BUILD_DIR);
 
-		log('Running expo export with Atlas enabled...');
+		// Clean .expo directory to prevent stale atlas.jsonl files
+		const expoDir = path.join(MAIN_APP_DIR, '.expo');
+		cleanDirectory(expoDir);
+
+		// Check if Atlas should be enabled (opt-in via environment variable)
+		const enableAtlas = process.env.ENABLE_EXPO_ATLAS === 'true';
+
+		if (enableAtlas) {
+			log('Running expo export with Atlas enabled (ENABLE_EXPO_ATLAS=true)...');
+		} else {
+			log('Running expo export (Atlas disabled by default due to stability issues)...');
+			log('To enable Atlas, set ENABLE_EXPO_ATLAS=true environment variable');
+		}
+
 		// Run expo export from the main app directory with environment variables
 		process.chdir(MAIN_APP_DIR);
 
@@ -222,14 +235,16 @@ async function build() {
 		const env = {
 			...process.env,
 			WCPOS_BASEURL_PLACEHOLDER: UNIQUE_BASEURL_PLACEHOLDER,
-			EXPO_UNSTABLE_ATLAS: 'true',
-			// Ensure Atlas debugging is enabled
-			DEBUG: 'expo:atlas*',
 		};
 
-		log('Environment variables set:');
-		log(`EXPO_UNSTABLE_ATLAS: ${env.EXPO_UNSTABLE_ATLAS}`);
-		log(`DEBUG: ${env.DEBUG}`);
+		// Only enable Atlas if explicitly requested
+		if (enableAtlas) {
+			env.EXPO_UNSTABLE_ATLAS = 'true';
+			env.DEBUG = 'expo:atlas*';
+			log('Environment variables set:');
+			log(`EXPO_UNSTABLE_ATLAS: ${env.EXPO_UNSTABLE_ATLAS}`);
+			log(`DEBUG: ${env.DEBUG}`);
+		}
 
 		try {
 			execSync('npx expo export --output-dir ./web-build --platform=web', {
