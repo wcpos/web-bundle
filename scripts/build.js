@@ -99,8 +99,9 @@ function replaceChunkReferences(buildDir) {
 		);
 
 		// Also handle the old pattern (without placeholder prefix) in case it still exists
+		// Use negative lookbehind to avoid matching quotes that follow a '+' (already processed by placeholder patterns)
 		content = content.replace(
-			/"\/_expo\/static\/js\/web\//g,
+			/(?<!\+)"\/_expo\/static\/js\/web\//g,
 			`(window.cdnBaseUrl||"")+"/_expo/static/js/web/`
 		);
 
