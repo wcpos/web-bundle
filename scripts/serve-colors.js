@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-env node */
 
 const http = require('http');
 const fs = require('fs').promises;
@@ -25,15 +26,14 @@ server.listen(PORT, () => {
 	const url = `http://localhost:${PORT}`;
 	console.log(`\n🎨 Color Palette Server running at ${url}\n`);
 	console.log('Press Ctrl+C to stop\n');
-	
+
 	// Try to open the browser automatically
 	const platform = process.platform;
 	const openCommand = platform === 'darwin' ? 'open' : platform === 'win32' ? 'start' : 'xdg-open';
-	
+
 	exec(`${openCommand} ${url}`, (error) => {
 		if (error) {
 			console.log('Could not open browser automatically. Please open manually.');
 		}
 	});
 });
-
