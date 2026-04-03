@@ -171,6 +171,50 @@ function replaceBaseUrlReferences(buildDir) {
 	log(`Total baseUrl references replaced: ${totalReplacements}`);
 }
 
+/**
+ * Prepend the Metro runtime and common chunks into the entry bundle.
+ *
+ * Metro splits the output into __expo-metro-runtime, __common, and entry files.
+ * The runtime defines `__d` (the module system) and must execute before any
+ * chunk that calls `__d(...)`. Since the WP plugin loads a single bundle file
+ * from metadata.json, we concatenate them in the correct order.
+ */
+function prependRuntimeChunks(buildDir) {
+	const staticJsDir = path.join(buildDir, '_expo', 'static', 'js', 'web');
+	if (!fs.existsSync(staticJsDir)) return;
+
+	const jsFiles = fs.readdirSync(staticJsDir).filter((f) => f.endsWith('.js'));
+	const runtimeFile = jsFiles.find((f) => f.startsWith('__expo-metro-runtime-'));
+	const commonFile = jsFiles.find((f) => f.startsWith('__common-'));
+	const entryFile = jsFiles.find((f) => f.startsWith('entry-'));
+
+	if (!entryFile) {
+		log('No entry file found, skipping runtime prepend');
+		return;
+	}
+
+	const chunks = [runtimeFile, commonFile].filter(Boolean);
+	if (chunks.length === 0) {
+		log('No runtime/common chunks found, skipping prepend');
+		return;
+	}
+
+	const entryPath = path.join(staticJsDir, entryFile);
+	const entryContent = fs.readFileSync(entryPath, 'utf8');
+
+	const prependContent = chunks
+		.map((f) => {
+			const content = fs.readFileSync(path.join(staticJsDir, f), 'utf8');
+			fs.unlinkSync(path.join(staticJsDir, f));
+			log(`Prepended and removed ${f}`);
+			return content;
+		})
+		.join('\n');
+
+	fs.writeFileSync(entryPath, prependContent + '\n' + entryContent);
+	log(`Prepended ${chunks.length} runtime chunk(s) into ${entryFile}`);
+}
+
 function generateMetadata(buildDir) {
 	const { bundleFile, cssFile } = findBundleFiles(buildDir);
 
@@ -288,6 +332,10 @@ async function build() {
 		log('Copying build files...');
 		// Copy built files to our build directory
 		copyDirectory(WEB_BUILD_DIR, BUILD_DIR);
+
+		log('Prepending runtime chunks...');
+		// Merge runtime and common chunks into entry bundle
+		prependRuntimeChunks(BUILD_DIR);
 
 		// Copy Atlas files if found
 		if (foundAtlasFiles.length > 0) {
