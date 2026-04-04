@@ -202,16 +202,25 @@ function prependRuntimeChunks(buildDir) {
 	const entryPath = path.join(staticJsDir, entryFile);
 	const entryContent = fs.readFileSync(entryPath, 'utf8');
 
-	const prependContent = chunks
-		.map((f) => {
-			const content = fs.readFileSync(path.join(staticJsDir, f), 'utf8');
-			fs.unlinkSync(path.join(staticJsDir, f));
-			log(`Prepended and removed ${f}`);
-			return content;
-		})
-		.join('\n');
+	const chunkContents = chunks.map((chunkName) => {
+		const chunkPath = path.join(staticJsDir, chunkName);
+		return {
+			name: chunkName,
+			path: chunkPath,
+			content: fs.readFileSync(chunkPath, 'utf8'),
+		};
+	});
 
-	fs.writeFileSync(entryPath, prependContent + '\n' + entryContent);
+	const prependContent = chunkContents.map((chunk) => chunk.content).join('\n');
+	const mergedEntryContent = prependContent + '\n' + entryContent;
+	const tempEntryPath = `${entryPath}.tmp`;
+	fs.writeFileSync(tempEntryPath, mergedEntryContent);
+	fs.renameSync(tempEntryPath, entryPath);
+
+	for (const chunk of chunkContents) {
+		fs.unlinkSync(chunk.path);
+		log(`Prepended and removed ${chunk.name}`);
+	}
 	log(`Prepended ${chunks.length} runtime chunk(s) into ${entryFile}`);
 }
 
