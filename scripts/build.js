@@ -213,9 +213,17 @@ function prependRuntimeChunks(buildDir) {
 
 	const prependContent = chunkContents.map((chunk) => chunk.content).join('\n');
 	const mergedEntryContent = prependContent + '\n' + entryContent;
-	const tempEntryPath = `${entryPath}.tmp`;
-	fs.writeFileSync(tempEntryPath, mergedEntryContent);
-	fs.renameSync(tempEntryPath, entryPath);
+	const tempEntryPath = `${entryPath}.tmp-${process.pid}-${Date.now()}`;
+
+	try {
+		fs.writeFileSync(tempEntryPath, mergedEntryContent, 'utf8');
+		fs.renameSync(tempEntryPath, entryPath);
+	} catch (error) {
+		if (fs.existsSync(tempEntryPath)) {
+			fs.rmSync(tempEntryPath, { force: true });
+		}
+		throw error;
+	}
 
 	for (const chunk of chunkContents) {
 		fs.unlinkSync(chunk.path);
