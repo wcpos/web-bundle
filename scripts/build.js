@@ -51,15 +51,12 @@ function findBundleFiles(buildDir) {
 		const commonFile = jsFiles.find((file) => file.startsWith('__common-'));
 		entryFile = jsFiles.find((file) => file.startsWith('entry-'));
 
-		// Runtime and entry are required; common is optional
-		const missing = [];
-		if (!runtimeFile) missing.push('__expo-metro-runtime-*.js');
-		if (!entryFile) missing.push('entry-*.js');
-		if (missing.length > 0) {
-			throw new Error(`Required Metro chunks missing from build output: ${missing.join(', ')}`);
+		if (!entryFile) {
+			throw new Error('Required Metro chunk missing from build output: entry-*.js');
 		}
 
-		bundles.push(`_expo/static/js/web/${runtimeFile}`);
+		// Runtime/common may already be merged into entry by prependRuntimeChunks()
+		if (runtimeFile) bundles.push(`_expo/static/js/web/${runtimeFile}`);
 		if (commonFile) bundles.push(`_expo/static/js/web/${commonFile}`);
 		bundles.push(`_expo/static/js/web/${entryFile}`);
 	}
