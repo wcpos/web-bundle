@@ -37,28 +37,42 @@ function findBundleFiles(buildDir) {
 	const staticCssDir = path.join(buildDir, '_expo', 'static', 'css');
 	const staticJsDir = path.join(buildDir, '_expo', 'static', 'js', 'web');
 
-	let bundleFile = null;
+	let entryFile = null;
 	let cssFile = null;
+	const bundles = [];
 
-	// Find the main entry bundle file
 	if (fs.existsSync(staticJsDir)) {
-		const bundleFiles = fs.readdirSync(staticJsDir).filter((file) => file.endsWith('.js'));
-		if (bundleFiles.length > 0) {
-			// Look for entry file first
-			bundleFile = bundleFiles.find((file) => file.startsWith('entry-')) || bundleFiles[0];
+		const jsFiles = fs.readdirSync(staticJsDir).filter((file) => file.endsWith('.js'));
+
+		// Boot chunks must load before the entry bundle (order matters):
+		// 1. __expo-metro-runtime — defines the __d module system
+		// 2. __common — shared modules
+		const runtimeFile = jsFiles.find((file) => file.startsWith('__expo-metro-runtime-'));
+		const commonFile = jsFiles.find((file) => file.startsWith('__common-'));
+		entryFile = jsFiles.find((file) => file.startsWith('entry-'));
+
+		// Runtime and entry are required; common is optional
+		const missing = [];
+		if (!runtimeFile) missing.push('__expo-metro-runtime-*.js');
+		if (!entryFile) missing.push('entry-*.js');
+		if (missing.length > 0) {
+			throw new Error(`Required Metro chunks missing from build output: ${missing.join(', ')}`);
 		}
+
+		bundles.push(`_expo/static/js/web/${runtimeFile}`);
+		if (commonFile) bundles.push(`_expo/static/js/web/${commonFile}`);
+		bundles.push(`_expo/static/js/web/${entryFile}`);
 	}
 
 	// Find the main CSS file
 	if (fs.existsSync(staticCssDir)) {
 		const cssFiles = fs.readdirSync(staticCssDir).filter((file) => file.endsWith('.css'));
 		if (cssFiles.length > 0) {
-			// Look for web file
 			cssFile = cssFiles.find((file) => file.startsWith('web-')) || cssFiles[0];
 		}
 	}
 
-	return { bundleFile, cssFile };
+	return { entryFile, bundles, cssFile };
 }
 
 function replaceChunkReferences(buildDir) {
@@ -233,18 +247,18 @@ function prependRuntimeChunks(buildDir) {
 }
 
 function generateMetadata(buildDir) {
-	const { bundleFile, cssFile } = findBundleFiles(buildDir);
+	const { entryFile, bundles, cssFile } = findBundleFiles(buildDir);
 
 	const metadata = {
-		version: 0,
+		version: 1,
 		bundler: 'metro',
 		fileMetadata: {
 			web: {},
 		},
 	};
 
-	if (bundleFile) {
-		metadata.fileMetadata.web.bundle = `_expo/static/js/web/${bundleFile}`;
+	if (bundles.length > 0) {
+		metadata.fileMetadata.web.bundles = bundles;
 	}
 
 	if (cssFile) {
@@ -253,7 +267,7 @@ function generateMetadata(buildDir) {
 
 	const metadataPath = path.join(buildDir, 'metadata.json');
 	fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
-	log(`Generated metadata.json with bundle: ${bundleFile}, css: ${cssFile}`);
+	log(`Generated metadata.json with ${bundles.length} bundles, css: ${cssFile}`);
 
 	return metadata;
 }
@@ -385,7 +399,7 @@ async function build() {
 
 		log('Build completed successfully!');
 		log(`Files available in: ${BUILD_DIR}`);
-		log(`Bundle: ${metadata.fileMetadata.web.bundle || 'not found'}`);
+		log(`Bundles: ${(metadata.fileMetadata.web.bundles || []).join(', ') || 'not found'}`);
 		log(`CSS: ${metadata.fileMetadata.web.css || 'not found'}`);
 	} catch (error) {
 		console.error('[build] Error:', error.message);
