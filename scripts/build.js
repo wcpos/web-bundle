@@ -40,13 +40,17 @@ function findBundleFiles(buildDir) {
 	let entryFile = null;
 	let cssFile = null;
 
-	if (fs.existsSync(staticJsDir)) {
-		const jsFiles = fs.readdirSync(staticJsDir).filter((file) => file.endsWith('.js'));
-		entryFile = jsFiles.find((file) => file.startsWith('entry-'));
+	if (!fs.existsSync(staticJsDir)) {
+		throw new Error(
+			'Required Metro output directory missing from build output: _expo/static/js/web'
+		);
+	}
 
-		if (!entryFile) {
-			throw new Error('Required Metro chunk missing from build output: entry-*.js');
-		}
+	const jsFiles = fs.readdirSync(staticJsDir).filter((file) => file.endsWith('.js'));
+	entryFile = jsFiles.find((file) => file.startsWith('entry-'));
+
+	if (!entryFile) {
+		throw new Error('Required Metro chunk missing from build output: entry-*.js');
 	}
 
 	// Find the main CSS file
