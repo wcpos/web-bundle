@@ -39,29 +39,14 @@ function findBundleFiles(buildDir) {
 
 	let entryFile = null;
 	let cssFile = null;
-	const bundles = [];
 
 	if (fs.existsSync(staticJsDir)) {
 		const jsFiles = fs.readdirSync(staticJsDir).filter((file) => file.endsWith('.js'));
-
-		// Boot chunks must load before the entry bundle (order matters):
-		// 1. __expo-metro-runtime — defines the __d module system
-		// 2. __common — shared modules
-		const runtimeFile = jsFiles.find((file) => file.startsWith('__expo-metro-runtime-'));
-		const commonFile = jsFiles.find((file) => file.startsWith('__common-'));
 		entryFile = jsFiles.find((file) => file.startsWith('entry-'));
 
-		// Runtime and entry are required; common is optional
-		const missing = [];
-		if (!runtimeFile) missing.push('__expo-metro-runtime-*.js');
-		if (!entryFile) missing.push('entry-*.js');
-		if (missing.length > 0) {
-			throw new Error(`Required Metro chunks missing from build output: ${missing.join(', ')}`);
+		if (!entryFile) {
+			throw new Error('Required Metro chunk missing from build output: entry-*.js');
 		}
-
-		bundles.push(`_expo/static/js/web/${runtimeFile}`);
-		if (commonFile) bundles.push(`_expo/static/js/web/${commonFile}`);
-		bundles.push(`_expo/static/js/web/${entryFile}`);
 	}
 
 	// Find the main CSS file
@@ -72,7 +57,7 @@ function findBundleFiles(buildDir) {
 		}
 	}
 
-	return { entryFile, bundles, cssFile };
+	return { entryFile, cssFile };
 }
 
 function replaceChunkReferences(buildDir) {
@@ -247,18 +232,18 @@ function prependRuntimeChunks(buildDir) {
 }
 
 function generateMetadata(buildDir) {
-	const { entryFile, bundles, cssFile } = findBundleFiles(buildDir);
+	const { entryFile, cssFile } = findBundleFiles(buildDir);
 
 	const metadata = {
-		version: 1,
+		version: 0,
 		bundler: 'metro',
 		fileMetadata: {
 			web: {},
 		},
 	};
 
-	if (bundles.length > 0) {
-		metadata.fileMetadata.web.bundles = bundles;
+	if (entryFile) {
+		metadata.fileMetadata.web.bundle = `_expo/static/js/web/${entryFile}`;
 	}
 
 	if (cssFile) {
@@ -267,7 +252,7 @@ function generateMetadata(buildDir) {
 
 	const metadataPath = path.join(buildDir, 'metadata.json');
 	fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
-	log(`Generated metadata.json with ${bundles.length} bundles, css: ${cssFile}`);
+	log(`Generated metadata.json with bundle: ${entryFile}, css: ${cssFile}`);
 
 	return metadata;
 }
@@ -399,7 +384,7 @@ async function build() {
 
 		log('Build completed successfully!');
 		log(`Files available in: ${BUILD_DIR}`);
-		log(`Bundles: ${(metadata.fileMetadata.web.bundles || []).join(', ') || 'not found'}`);
+		log(`Bundle: ${metadata.fileMetadata.web.bundle || 'not found'}`);
 		log(`CSS: ${metadata.fileMetadata.web.css || 'not found'}`);
 	} catch (error) {
 		console.error('[build] Error:', error.message);
