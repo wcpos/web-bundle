@@ -9,6 +9,7 @@ const ROOT_DIR = process.cwd();
 const MAIN_APP_DIR = path.join(ROOT_DIR, '..', 'main');
 const BUILD_DIR = path.join(ROOT_DIR, 'build');
 const WEB_BUILD_DIR = path.join(MAIN_APP_DIR, 'web-build');
+const PRESERVED_BUILD_FILES = ['indexeddb.worker.js'];
 
 function log(message) {
 	console.log(`[build] ${message}`);
@@ -31,6 +32,30 @@ function cleanDirectory(dir) {
 function copyDirectory(src, dest) {
 	execSync(`cp -r "${src}"/* "${dest}"/`, { stdio: 'inherit' });
 	log(`Copied files from ${src} to ${dest}`);
+}
+
+function capturePreservedBuildFiles(dir, fileNames = PRESERVED_BUILD_FILES) {
+	const preservedFiles = new Map();
+
+	for (const fileName of fileNames) {
+		const filePath = path.join(dir, fileName);
+		if (!fs.existsSync(filePath)) {
+			continue;
+		}
+
+		preservedFiles.set(fileName, fs.readFileSync(filePath));
+	}
+
+	return preservedFiles;
+}
+
+function syncBuildArtifacts(src, dest, preservedFiles = capturePreservedBuildFiles(dest)) {
+	copyDirectory(src, dest);
+
+	for (const [fileName, fileContents] of preservedFiles.entries()) {
+		fs.writeFileSync(path.join(dest, fileName), fileContents);
+		log(`Restored preserved build artifact: ${fileName}`);
+	}
 }
 
 function findBundleFiles(buildDir) {
@@ -272,6 +297,8 @@ async function build() {
 
 		log(`Generated unique baseUrl placeholder: ${UNIQUE_BASEURL_PLACEHOLDER}`);
 
+		const preservedBuildFiles = capturePreservedBuildFiles(BUILD_DIR);
+
 		// Clean and create build directory
 		cleanDirectory(BUILD_DIR);
 		ensureDirectoryExists(BUILD_DIR);
@@ -350,8 +377,8 @@ async function build() {
 		process.chdir(ROOT_DIR);
 
 		log('Copying build files...');
-		// Copy built files to our build directory
-		copyDirectory(WEB_BUILD_DIR, BUILD_DIR);
+		// Copy built files to our build directory while preserving pinned legacy workers.
+		syncBuildArtifacts(WEB_BUILD_DIR, BUILD_DIR, preservedBuildFiles);
 
 		log('Prepending runtime chunks...');
 		// Merge runtime and common chunks into entry bundle
