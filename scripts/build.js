@@ -114,23 +114,26 @@ function replaceChunkReferences(buildDir) {
 		let content = fs.readFileSync(filePath, 'utf8');
 		const originalContent = content;
 
-		// Replace placeholder + /_expo paths with window.cdnBaseUrl + /_expo
+		// Replace placeholder + /_expo paths with window.cdnBaseUrl + /_expo.
+		// .replace(/\/$/,"") strips a trailing slash from cdnBaseUrl so concatenation
+		// with the leading-slash path never produces a double slash. jsDelivr 301-redirects
+		// URLs with "//" segments, which can break chunk loading in browsers.
 		content = content.replace(
 			new RegExp(`"${escapedPlaceholder}\\/_expo`, 'g'),
-			`(window.cdnBaseUrl||"")+"/_expo`
+			`((window.cdnBaseUrl||"").replace(/\\/$/,""))+"/_expo`
 		);
 
 		// Replace placeholder + /assets paths with window.cdnBaseUrl + /assets
 		content = content.replace(
 			new RegExp(`"${escapedPlaceholder}\\/assets`, 'g'),
-			`(window.cdnBaseUrl||"")+"/assets`
+			`((window.cdnBaseUrl||"").replace(/\\/$/,""))+"/assets`
 		);
 
 		// Also handle the old pattern (without placeholder prefix) in case it still exists
 		// Use negative lookbehind to avoid matching quotes that follow a '+' (already processed by placeholder patterns)
 		content = content.replace(
 			/(?<!\+)"\/_expo\/static\/js\/web\//g,
-			`(window.cdnBaseUrl||"")+"/_expo/static/js/web/`
+			`((window.cdnBaseUrl||"").replace(/\\/$/,""))+"/_expo/static/js/web/`
 		);
 
 		if (content !== originalContent) {
