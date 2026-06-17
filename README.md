@@ -90,8 +90,7 @@ Then set `window.cdnBaseUrl = "http://localhost:4567/build"` in the app.
 
 ```bash
 pnpm colors     # opens the colour-palette reference at http://localhost:3001
-node --test tests/   # run the build-pipeline unit tests
-pnpm lint       # lint the scripts/
+node --test tests/*.test.js   # run the build-pipeline unit tests
 ```
 
 ## 🌿 Branches
