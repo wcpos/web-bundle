@@ -43,7 +43,13 @@ const server = http.createServer((req, res) => {
 	// Add CORS headers for development
 	res.setHeader('Access-Control-Allow-Origin', '*');
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-	res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+	// Keep in step with the WCPOS request headers the client sends (the plugin
+	// reflects announced x-wcpos-* names since free#1763; this static dev list
+	// must at least cover the shipped set or local web dev fails preflight).
+	res.setHeader(
+		'Access-Control-Allow-Headers',
+		'Content-Type, Authorization, X-WCPOS, X-WCPOS-Store, X-WCPOS-Protocol, X-WCPOS-Client'
+	);
 
 	// Handle preflight requests
 	if (req.method === 'OPTIONS') {
