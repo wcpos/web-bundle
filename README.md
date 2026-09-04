@@ -43,6 +43,15 @@ https://cdn.jsdelivr.net/gh/wcpos/web-bundle@<version>/build/_expo/static/js/web
 
 Pinning to a git tag (e.g. `@v1.9.0`) gives a stable, immutable URL.
 
+### One ref per lane, named after the lane
+
+The WordPress plugin reads exactly one ref per monorepo trunk (owner ruling, 2026-09-04):
+
+| Monorepo lane | jsDelivr ref | What it is |
+|---|---|---|
+| `next` (in development) | `https://cdn.jsdelivr.net/gh/wcpos/web-bundle@next` | The `next` **branch** of this repo _is_ the dev lane's tag. It is refreshed by the monorepo's `publish-web-bundle.yml` (`bundle_branch=next`), and that publish is the whole deploy — there is no versioned or prerelease tag for `next`. `dev-next.wcpos.com` reads it via `WCPOS_WEB_BUNDLE_REF=next`. |
+| `main` (released) | `https://cdn.jsdelivr.net/gh/wcpos/web-bundle@<major.minor>` — `@1.10` today, `@1.11` once `next` moves to `main` | The plugin derives the ref from its own version; the release train cuts the tag. The `main` **branch** of this repo is staging only and moves nothing a released plugin loads. |
+
 The bundle is **path-portable**: every internal asset and chunk URL resolves against a runtime global rather than a baked-in origin, so the same build works from jsDelivr, a local dev server, or inside Electron. The consumer sets:
 
 - `window.cdnBaseUrl` — the base every `/_expo/…` and `/assets/…` URL is prefixed with.
