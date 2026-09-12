@@ -5,12 +5,12 @@ const os = require('os');
 const path = require('path');
 const vm = require('vm');
 
-function loadPrependRuntimeChunks() {
+function loadBuildFunctions() {
 	const buildScriptPath = path.join(__dirname, '..', 'scripts', 'build.js');
 	const scriptSource = fs.readFileSync(buildScriptPath, 'utf8');
 	const sourceWithoutEntrypoint = scriptSource.replace(
 		/\n\/\/ Run the build[\s\S]*$/,
-		'\nmodule.exports = { prependRuntimeChunks };\n'
+		'\nmodule.exports = { prependRuntimeChunks, extractSourceMaps: typeof extractSourceMaps === "undefined" ? undefined : extractSourceMaps, stripSourceMapComments: typeof stripSourceMapComments === "undefined" ? undefined : stripSourceMapComments };\n'
 	);
 	const sandbox = {
 		require,
@@ -24,11 +24,11 @@ function loadPrependRuntimeChunks() {
 
 	vm.runInNewContext(sourceWithoutEntrypoint, sandbox, { filename: buildScriptPath });
 
-	return sandbox.module.exports.prependRuntimeChunks;
+	return sandbox.module.exports;
 }
 
 test('keeps source chunks when merged entry write fails', () => {
-	const prependRuntimeChunks = loadPrependRuntimeChunks();
+	const { prependRuntimeChunks } = loadBuildFunctions();
 	const tempBuildDir = fs.mkdtempSync(path.join(os.tmpdir(), 'prepend-runtime-test-'));
 	const staticJsDir = path.join(tempBuildDir, '_expo', 'static', 'js', 'web');
 
@@ -66,7 +66,7 @@ test('keeps source chunks when merged entry write fails', () => {
 });
 
 test('cleans temp entry file when rename fails', () => {
-	const prependRuntimeChunks = loadPrependRuntimeChunks();
+	const { prependRuntimeChunks } = loadBuildFunctions();
 	const tempBuildDir = fs.mkdtempSync(path.join(os.tmpdir(), 'prepend-runtime-test-'));
 	const staticJsDir = path.join(tempBuildDir, '_expo', 'static', 'js', 'web');
 
@@ -101,5 +101,79 @@ test('cleans temp entry file when rename fails', () => {
 	} finally {
 		fs.renameSync = originalRenameSync;
 		fs.rmSync(tempBuildDir, { recursive: true, force: true });
+	}
+});
+
+// Offsets must include the join newline, even when a chunk already ends in one.
+test('composes runtime, common and entry maps at their concatenated line offsets', (t) => {
+	const { prependRuntimeChunks } = loadBuildFunctions();
+	const buildDir = fs.mkdtempSync(path.join(os.tmpdir(), 'index-map-test-'));
+	t.after(() => fs.rmSync(buildDir, { recursive: true, force: true }));
+	const jsDir = path.join(buildDir, '_expo', 'static', 'js', 'web');
+	fs.mkdirSync(jsDir, { recursive: true });
+	const names = ['__expo-metro-runtime-a.js', '__common-b.js', 'entry-c.js'];
+	const contents = [
+		'runtime();\n//# sourceMappingURL=runtime.js.map\n',
+		'common();\ncommon2();',
+		'entry();',
+	];
+	const maps = names.map((name) => ({
+		version: 3,
+		sources: [name + '.tsx'],
+		sourcesContent: ['original();'],
+		names: [],
+		mappings: 'AAAA',
+	}));
+	for (const [i, name] of names.entries()) {
+		fs.writeFileSync(path.join(jsDir, name), contents[i]);
+		fs.writeFileSync(path.join(jsDir, name + '.map'), JSON.stringify(maps[i]));
+	}
+
+	prependRuntimeChunks(buildDir);
+
+	const result = JSON.parse(fs.readFileSync(path.join(jsDir, 'entry-c.js.map'), 'utf8'));
+	assert.equal(result.version, 3);
+	assert.deepEqual(
+		result.sections.map((section) => section.offset),
+		[
+			{ line: 0, column: 0 },
+			{ line: 3, column: 0 },
+			{ line: 5, column: 0 },
+		]
+	);
+	assert.deepEqual(
+		result.sections.map((section) => section.map),
+		maps
+	);
+	assert.equal(fs.readFileSync(path.join(jsDir, 'entry-c.js'), 'utf8'), contents.join('\n'));
+	assert.deepEqual(fs.readdirSync(jsDir).sort(), ['entry-c.js', 'entry-c.js.map']);
+});
+
+test('separates maps and removes map comments from every shipped JS without shifting lines', (t) => {
+	const { extractSourceMaps, stripSourceMapComments } = loadBuildFunctions();
+	assert.equal(typeof extractSourceMaps, 'function');
+	assert.equal(typeof stripSourceMapComments, 'function');
+	const root = fs.mkdtempSync(path.join(os.tmpdir(), 'strip-map-test-'));
+	t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+	const buildDir = path.join(root, 'build');
+	const mapsDir = path.join(root, 'web-build-maps');
+	fs.mkdirSync(path.join(buildDir, '_expo', 'web'), { recursive: true });
+	const files = ['worker.js', '_expo/web/entry.js'];
+	const content =
+		'runtime();\n//# sourceMappingURL=runtime.js.map\nentry();\n//# sourceMappingURL=entry.js.map\n//# debugId=metro-id';
+	for (const file of files) {
+		fs.writeFileSync(path.join(buildDir, file), content);
+		fs.writeFileSync(path.join(buildDir, file + '.map'), '{"version":3}');
+	}
+
+	extractSourceMaps(buildDir, mapsDir);
+	stripSourceMapComments(buildDir);
+
+	for (const file of files) {
+		const shipped = fs.readFileSync(path.join(buildDir, file), 'utf8');
+		assert.doesNotMatch(shipped, /sourceMappingURL|debugId/);
+		assert.equal(shipped, 'runtime();\n\nentry();\n\n');
+		assert.equal(fs.existsSync(path.join(buildDir, file + '.map')), false);
+		assert.equal(fs.readFileSync(path.join(mapsDir, file + '.map'), 'utf8'), '{"version":3}');
 	}
 });

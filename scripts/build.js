@@ -9,6 +9,7 @@ const ROOT_DIR = process.cwd();
 const MAIN_APP_DIR = path.join(ROOT_DIR, '..', 'main');
 const BUILD_DIR = path.join(ROOT_DIR, 'build');
 const WEB_BUILD_DIR = path.join(MAIN_APP_DIR, 'web-build');
+const MAPS_DIR = path.join(ROOT_DIR, 'web-build-maps');
 const PRESERVED_BUILD_FILES = ['indexeddb.worker.js'];
 
 function log(message) {
@@ -256,11 +257,44 @@ function prependRuntimeChunks(buildDir) {
 		throw error;
 	}
 
+	let line = 0;
+	const sections = [...chunkContents, { path: entryPath, content: entryContent }].map((chunk) => {
+		const map = JSON.parse(fs.readFileSync(`${chunk.path}.map`, 'utf8'));
+		const section = { offset: { line, column: 0 }, map };
+		// Each chunk is followed by the join's newline, including trailing empty lines.
+		line += chunk.content.split('\n').length;
+		return section;
+	});
+	fs.writeFileSync(`${entryPath}.map`, JSON.stringify({ version: 3, sections }));
+
 	for (const chunk of chunkContents) {
+		fs.unlinkSync(`${chunk.path}.map`);
 		fs.unlinkSync(chunk.path);
 		log(`Prepended and removed ${chunk.name}`);
 	}
 	log(`Prepended ${chunks.length} runtime chunk(s) into ${entryFile}`);
+}
+
+function extractSourceMaps(buildDir, mapsDir) {
+	for (const file of fs.readdirSync(buildDir, { recursive: true })) {
+		if (!file.endsWith('.map')) continue;
+		const destination = path.join(mapsDir, file);
+		fs.mkdirSync(path.dirname(destination), { recursive: true });
+		fs.renameSync(path.join(buildDir, file), destination);
+	}
+}
+
+function stripSourceMapComments(buildDir) {
+	for (const file of fs.readdirSync(buildDir, { recursive: true })) {
+		if (!file.endsWith('.js')) continue;
+		const filePath = path.join(buildDir, file);
+		const content = fs.readFileSync(filePath, 'utf8');
+		// Keep newlines for map offsets; remove Metro IDs so Sentry injects its runtime snippet.
+		fs.writeFileSync(
+			filePath,
+			content.replace(/^\/\/[#@][ \t]*(?:sourceMappingURL|debugId)=[^\r\n]*/gm, '')
+		);
+	}
 }
 
 function generateMetadata(buildDir) {
@@ -308,6 +342,8 @@ async function build() {
 
 		// Clean any previous web-build in main app
 		cleanDirectory(WEB_BUILD_DIR);
+		cleanDirectory(MAPS_DIR);
+		ensureDirectoryExists(MAPS_DIR);
 
 		// Clean .expo directory to prevent stale atlas.jsonl files
 		const expoDir = path.join(MAIN_APP_DIR, '.expo');
@@ -342,7 +378,7 @@ async function build() {
 		}
 
 		try {
-			execSync('npx expo export --output-dir ./web-build --platform=web', {
+			execSync('npx expo export --output-dir ./web-build --platform=web --source-maps external', {
 				stdio: 'inherit',
 				env: env,
 			});
@@ -379,13 +415,14 @@ async function build() {
 		// Return to web app directory
 		process.chdir(ROOT_DIR);
 
+		log('Prepending runtime chunks...');
+		prependRuntimeChunks(WEB_BUILD_DIR);
+		// Separate private maps before anything is copied into the published build.
+		extractSourceMaps(WEB_BUILD_DIR, MAPS_DIR);
+
 		log('Copying build files...');
 		// Copy built files to our build directory while preserving pinned legacy workers.
 		syncBuildArtifacts(WEB_BUILD_DIR, BUILD_DIR, preservedBuildFiles);
-
-		log('Prepending runtime chunks...');
-		// Merge runtime and common chunks into entry bundle
-		prependRuntimeChunks(BUILD_DIR);
 
 		// Copy Atlas files if found
 		if (foundAtlasFiles.length > 0) {
@@ -412,12 +449,15 @@ async function build() {
 		// Replace baseUrl placeholder with configurable window.baseUrl
 		replaceBaseUrlReferences(BUILD_DIR);
 
+		stripSourceMapComments(BUILD_DIR);
+
 		log('Generating metadata...');
 		// Generate metadata file
 		const metadata = generateMetadata(BUILD_DIR);
 
 		log('Build completed successfully!');
 		log(`Files available in: ${BUILD_DIR}`);
+		log(`Source maps available in: ${MAPS_DIR}`);
 		log(`Bundle: ${metadata.fileMetadata.web.bundle || 'not found'}`);
 		log(`CSS: ${metadata.fileMetadata.web.css || 'not found'}`);
 	} catch (error) {
