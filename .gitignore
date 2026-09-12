@@ -2,3 +2,5 @@
 .turbo
 build/atlas.jsonl
 build/indexeddb.worker.js
+
+web-build-maps/
