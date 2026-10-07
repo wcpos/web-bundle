@@ -1,0 +1,7 @@
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="18d464f0-733e-4515-8d0d-96404b105d77")}catch(e){}}();
+var _sentryDebugIds,_sentryDebugIdIdentifier;void 0===_sentryDebugIds&&(_sentryDebugIds={});try{var stack=(new Error).stack;stack&&(_sentryDebugIds[stack]="18d464f0-733e-4515-8d0d-96404b105d77",_sentryDebugIdIdentifier="sentry-dbid-18d464f0-733e-4515-8d0d-96404b105d77")}catch(e){}
+var SENTRY_RELEASE;SENTRY_RELEASE={name: "WCPOS", version: "2.0.0"};
+__d(function(g,r,i,a,m,e,d){"use strict";Object.defineProperty(e,'__esModule',{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return o}});var t=r(d[0]);r(d[1]);var s=r(d[2]),n=r(d[3]),c=r(d[4]);function o(){const o=(0,t.c)(8),u=(0,s.useT)();let l,_,f,b;return o[0]!==u?(l=u("settings.card_readers"),o[0]=u,o[1]=l):l=o[1],o[2]!==u?(_=u("settings.card_readers_description"),o[2]=u,o[3]=_):_=o[3],o[4]===Symbol.for("react.memo_cache_sentinel")?(f=(0,c.jsx)(n.CardReadersSettings,{}),o[4]=f):f=o[4],o[5]!==l||o[6]!==_?(b=(0,c.jsx)(n.SettingsPage,{title:l,description:_,testID:"screen-settings-card-readers",children:f}),o[5]=l,o[6]=_,o[7]=b):b=o[7],b}},994,[1018,12,1033,1553,6]);
+
+
+//# debugId=18d464f0-733e-4515-8d0d-96404b105d77
