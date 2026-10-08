@@ -1,7 +1,0 @@
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="bfacb543-ec02-42f1-b2df-b07b2c8fd383")}catch(e){}}();
-var _sentryDebugIds,_sentryDebugIdIdentifier;void 0===_sentryDebugIds&&(_sentryDebugIds={});try{var stack=(new Error).stack;stack&&(_sentryDebugIds[stack]="bfacb543-ec02-42f1-b2df-b07b2c8fd383",_sentryDebugIdIdentifier="sentry-dbid-bfacb543-ec02-42f1-b2df-b07b2c8fd383")}catch(e){}
-var SENTRY_RELEASE;SENTRY_RELEASE={name: "WCPOS", version: "2.0.0"};
-__d(function(g,r,i,a,m,e,d){"use strict";Object.defineProperty(e,'__esModule',{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return h}});var t=r(d[0]);r(d[1]);var n=r(d[2]),o=r(d[3]),s=r(d[4]),u=r(d[5]),l=r(d[6]),c=r(d[7]);function h(){const h=(0,t.c)(6),f=(0,l.useUnreadLogsCount)(),_=(0,u.useHealthNavigationItems)(f),v=(0,o.useT)();let b,j,y;return h[0]!==v?(b=v("common.store_health"),h[0]=v,h[1]=b):b=h[1],h[2]===Symbol.for("react.memo_cache_sentinel")?(j=(0,c.jsx)(n.Slot,{}),h[2]=j):j=h[2],h[3]!==_||h[4]!==b?(y=(0,c.jsx)(s.NavigationAreaLayout,{items:_,indexHref:"/health",areaLabel:b,testID:"health-navigation",children:j}),h[3]=_,h[4]=b,h[5]=y):y=h[5],y}},974,[1017,12,1018,1032,1224,1225,1130,6]);
-
-
-//# debugId=bfacb543-ec02-42f1-b2df-b07b2c8fd383
