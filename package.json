@@ -8,7 +8,7 @@
     "dev": "node scripts/dev-server.js",
     "colors": "node scripts/serve-colors.js",
     "atlas": "npx expo-atlas ./build/atlas.jsonl",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test tests/*.test.js",
     "lint": "eslint scripts --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint scripts --ext .js,.jsx,.ts,.tsx --fix"
   },
