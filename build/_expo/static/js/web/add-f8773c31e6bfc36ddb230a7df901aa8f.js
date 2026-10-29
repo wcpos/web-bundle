@@ -1,7 +1,0 @@
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="50504451-baef-4f32-a458-05beab5bb2fe")}catch(e){}}();
-var _sentryDebugIds,_sentryDebugIdIdentifier;void 0===_sentryDebugIds&&(_sentryDebugIds={});try{var stack=(new Error).stack;stack&&(_sentryDebugIds[stack]="50504451-baef-4f32-a458-05beab5bb2fe",_sentryDebugIdIdentifier="sentry-dbid-50504451-baef-4f32-a458-05beab5bb2fe")}catch(e){}
-var SENTRY_RELEASE;SENTRY_RELEASE={name: "WCPOS", version: "2.0.0"};
-__d(function(g,r,i,a,_m,_e,_d){"use strict";Object.defineProperty(_e,'__esModule',{value:!0}),Object.defineProperty(_e,"default",{enumerable:!0,get:function(){return f}});var e=r(_d[0]),t=(function(e){if(e&&e.__esModule)return e;var t={};return e&&Object.keys(e).forEach(function(n){if('default'!==n){var c=Object.getOwnPropertyDescriptor(e,n);Object.defineProperty(t,n,c.get?c:{enumerable:!0,get:function(){return e[n]}})}}),t.default=e,t})(r(_d[1])),n=r(_d[2]),c=r(_d[3]),o=r(_d[4]);const u=(0,c.lazyRest)(e=>e.AddCouponScreen);var f=(0,n.withProAccess)(function(){const n=(0,e.c)(1);let c;return n[0]===Symbol.for("react.memo_cache_sentinel")?(c=(0,o.jsx)(t.Suspense,{fallback:null,children:(0,o.jsx)(u,{})}),n[0]=c):c=n[0],c},'coupons')},956,[1008,12,1176,1177,6]);
-
-
-//# debugId=50504451-baef-4f32-a458-05beab5bb2fe
