@@ -1,0 +1,7 @@
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="f3ca75a3-4def-4e52-a719-7df76dd6d924")}catch(e){}}();
+var _sentryDebugIds,_sentryDebugIdIdentifier;void 0===_sentryDebugIds&&(_sentryDebugIds={});try{var stack=(new Error).stack;stack&&(_sentryDebugIds[stack]="f3ca75a3-4def-4e52-a719-7df76dd6d924",_sentryDebugIdIdentifier="sentry-dbid-f3ca75a3-4def-4e52-a719-7df76dd6d924")}catch(e){}
+var SENTRY_RELEASE;SENTRY_RELEASE={name: "WCPOS", version: "2.0.0"};
+__d(function(g,r,i,a,_m,_e,_d){"use strict";Object.defineProperty(_e,'__esModule',{value:!0}),Object.defineProperty(_e,"default",{enumerable:!0,get:function(){return o}});var e=r(_d[0]),t=(function(e){if(e&&e.__esModule)return e;var t={};return e&&Object.keys(e).forEach(function(n){if('default'!==n){var u=Object.getOwnPropertyDescriptor(e,n);Object.defineProperty(t,n,u.get?u:{enumerable:!0,get:function(){return e[n]}})}}),t.default=e,t})(r(_d[1])),n=r(_d[2]),u=r(_d[3]);const c=(0,n.lazyRest)(e=>e.Support);function o(){const n=(0,e.c)(1);let o;return n[0]===Symbol.for("react.memo_cache_sentinel")?(o=(0,u.jsx)(t.Suspense,{fallback:null,children:(0,u.jsx)(c,{})}),n[0]=o):o=n[0],o}},993,[1008,12,1176,6]);
+
+
+//# debugId=f3ca75a3-4def-4e52-a719-7df76dd6d924
