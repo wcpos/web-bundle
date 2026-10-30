@@ -3,8 +3,8 @@
   "bundler": "metro",
   "fileMetadata": {
     "web": {
-      "bundle": "_expo/static/js/web/entry-f0c0f161bb6c05ecc066a66a7cc24d4b.js",
-      "css": "_expo/static/css/global-81c3cd294f2c533482c220beb6e5cafc.css"
+      "bundle": "_expo/static/js/web/entry-dfe425d248b827bf5f3124e94055aa4a.js",
+      "css": "_expo/static/css/global-6708aaac599c6e75682528bbaf5c7ce1.css"
     }
   }
 }
