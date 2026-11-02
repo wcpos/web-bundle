@@ -33,6 +33,12 @@ export async function promoteLanePointer({ tag, commit, token, fetch = globalThi
   const old = await request(key) ?? { current: null, previous: null, rolled_back_from: null, killed: false, message: null, updated_at: null, updated_by: null };
   if (old.killed) throw new Error(`lane ${lane} is killed; unkill it in the admin page before promoting`);
   if (old.current === build) { console.log('already current'); return old; }
+  // index:<lane> is newest first; a tag for an older build never moves the pointer backwards
+  // (the admin page owns rollbacks).
+  const currentPosition = index.findIndex(item => item.build_id === old.current);
+  if (currentPosition >= 0 && index.indexOf(entry) > currentPosition) {
+    throw new Error(`build ${build} is older than the current ${old.current} on lane ${lane}; the admin page owns backward moves`);
+  }
   const pointer = { ...old, current: build, previous: old.current ?? old.previous, rolled_back_from: null,
     updated_at: now().toISOString(), updated_by: `web-bundle tag ${tag}` };
   if (dryRun) { console.log(`Dry run: ${JSON.stringify(pointer)}`); return pointer; }

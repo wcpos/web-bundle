@@ -53,6 +53,20 @@ test('killed lane refuses even when build is already current', async () => {
   await assert.rejects((await modulePromise).promoteLanePointer(f.options), /lane 2.0 is killed; unkill it in the admin page before promoting/);
   assert.equal(f.writes().length, 0);
 });
+test('a tag for an older build never moves the pointer backwards', async () => {
+  const newer = { ...entry, build_id: 'fedcba9876543210' };
+  const f = fixture({ 'index:2.0': [newer, entry], 'lane:2.0': { ...empty, current: newer.build_id } });
+  await assert.rejects((await modulePromise).promoteLanePointer(f.options), /older than the current fedcba9876543210 on lane 2.0/);
+  assert.equal(f.writes().length, 0);
+});
+test('a tag for a newer build moves the pointer forward and keeps the old current as previous', async () => {
+  const older = { ...entry, build_id: 'fedcba9876543210' };
+  const f = fixture({ 'index:2.0': [entry, older], 'lane:2.0': { ...empty, current: older.build_id } });
+  const pointer = await (await modulePromise).promoteLanePointer(f.options);
+  assert.equal(pointer.current, build);
+  assert.equal(pointer.previous, older.build_id);
+  assert.equal(f.writes().length, 1);
+});
 test('idempotent rerun neither writes nor polls', async () => {
   const f = fixture({ 'lane:2.0': { ...empty, current: build } });
   await (await modulePromise).promoteLanePointer(f.options);
