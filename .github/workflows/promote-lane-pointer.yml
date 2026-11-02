@@ -1,0 +1,36 @@
+# Promote a release tag's build to its CDN lane pointer.
+# The monorepo's tag-web-bundle.sh stays the human act of releasing.
+name: Promote lane pointer
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to promote
+        required: true
+        type: string
+# One promotion at a time, repo-wide: two tags on the same lane are a read-modify-write
+# on the same KV key, and lanes are few enough that serialising all of them costs nothing.
+concurrency:
+  group: promote-lane-pointer
+  cancel-in-progress: false
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # The script runs from the ref the workflow was triggered on (the tag on a push,
+      # the branch on a dispatch); the tag itself is fetched by name so a dispatch for a
+      # tag that predates this workflow still resolves its commit.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Promote tagged build
+        env:
+          CLOUDFLARE_CDN_TOKEN: ${{ secrets.CLOUDFLARE_CDN_TOKEN }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          tag="${INPUT_TAG:-$GITHUB_REF_NAME}"
+          git fetch --no-tags --depth=1 origin "refs/tags/$tag:refs/tags/$tag"
+          commit=$(git rev-parse --verify --end-of-options "$tag^{commit}")
+          node scripts/promote-lane-pointer.mjs --tag "$tag" --commit "$commit"
