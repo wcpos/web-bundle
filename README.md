@@ -87,6 +87,10 @@ color-palette.html     # standalone design-system / colour-token reference page
 
 In practice you don't run this by hand: the monorepo's **`publish-web-bundle`** workflow builds `apps/web` and publishes the result to this repo for jsDelivr.
 
+## Releasing
+
+Pushing a `v<X.Y>.<N>` tag moves cdn.wcpos.com's `lane:<X.Y>` pointer to the tagged build through the [promote-lane-pointer workflow](.github/workflows/promote-lane-pointer.yml). The admin page is the only place to move a lane pointer backwards.
+
 ## 🧪 Local testing
 
 To serve the committed bundle locally and point the app at it:
