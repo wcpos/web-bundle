@@ -23,22 +23,56 @@
         flex: 1;
       }
     </style>
+    <!--
+      Desktop (Electron) only. The shell hides the native title bar, so the top strip of the
+      page — the height Chromium reports for its Window Controls Overlay, which the app
+      reserves as top inset (components/desktop-window-chrome.electron.tsx) — is the handle
+      for moving the window. Chromium builds the drag region geometrically: the union of
+      `drag` boxes minus every `no-drag` box, whatever is painted on top. So anything that can
+      be tapped is opted out, or a sheet's close button, a toast or a list scrolled up into
+      the strip would move the window instead. Inert in a browser tab: `titlebar-area-height`
+      is undefined there (0px strip) and `app-region` only has meaning under a Window
+      Controls Overlay.
+    -->
+    <style id="desktop-window-drag-region">
+      #window-drag-region {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: env(titlebar-area-height, 0px);
+        pointer-events: none;
+        -webkit-app-region: drag;
+        app-region: drag;
+      }
+      /* Everything tappable — except what cannot take a pointer: a closed drawer's
+         full-window scrim stays laid out with an inline `pointer-events: none`, and a
+         no-drag box that size would carve the strip away. (`app-region: none` does not
+         undo an earlier `no-drag` in Chromium, so the exclusion has to be in the selector.) */
+      :is(button, a[href], input, select, textarea, [tabindex],
+          [role="dialog"], [role="menu"], [role="listbox"], [data-sonner-toaster]):not([style*="pointer-events: none"]) {
+        -webkit-app-region: no-drag;
+        app-region: no-drag;
+      }
+    </style>
     <script>
       // only define opfsWorker when _not_ running under Electron
       if (!navigator.userAgent.includes('Electron')) {
-        window.opfsWorker = '/opfs.worker.js';
+        window.opfsWorker = '/sqlite.worker.js';
       }
     </script>
-  <link rel="icon" href="/__WCPOS_BASEURL_PLACEHOLDER_1793542095649_gxsp2yedh46__/favicon.ico"/><link rel="preload" href="/__WCPOS_BASEURL_PLACEHOLDER_1793542095649_gxsp2yedh46__/_expo/static/css/global-589c242b533b5963c1eb03e697b4e4e5.css" as="style">
-<link rel="stylesheet" href="/__WCPOS_BASEURL_PLACEHOLDER_1793542095649_gxsp2yedh46__/_expo/static/css/global-589c242b533b5963c1eb03e697b4e4e5.css"></head>
+  <link rel="icon" href="/__WCPOS_BASEURL_PLACEHOLDER_1793617518257_1i3p2dhudn4__/favicon.ico"/><link rel="preload" href="/__WCPOS_BASEURL_PLACEHOLDER_1793617518257_1i3p2dhudn4__/_expo/static/css/global-050733030ac0ecfa558b4c9745f5d321.css" as="style">
+<link rel="stylesheet" href="/__WCPOS_BASEURL_PLACEHOLDER_1793617518257_1i3p2dhudn4__/_expo/static/css/global-050733030ac0ecfa558b4c9745f5d321.css"></head>
 
   <body>
     <!-- Use static rendering with Expo Router to support running without JavaScript. -->
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
+    <!-- Desktop window drag handle; see the style block in <head>. -->
+    <div id="window-drag-region"></div>
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
-  <script src="/__WCPOS_BASEURL_PLACEHOLDER_1793542095649_gxsp2yedh46__/_expo/static/js/web/__expo-metro-runtime-1f8f5d3ca6b7f58204d51e14506d73fb.js" defer></script><script src="/__WCPOS_BASEURL_PLACEHOLDER_1793542095649_gxsp2yedh46__/_expo/static/js/web/__common-5e673ae1ac99be4175ca013a91d40fe6.js" defer></script><script src="/__WCPOS_BASEURL_PLACEHOLDER_1793542095649_gxsp2yedh46__/_expo/static/js/web/entry-d6287ae5e4719afac8d75ed7ca0957fc.js" defer></script>
+  <script src="/__WCPOS_BASEURL_PLACEHOLDER_1793617518257_1i3p2dhudn4__/_expo/static/js/web/__expo-metro-runtime-8c088df87a31e4e6accd81c554ec290d.js" defer></script><script src="/__WCPOS_BASEURL_PLACEHOLDER_1793617518257_1i3p2dhudn4__/_expo/static/js/web/__common-b66292a2b3e44300b776bc4ab10fa2bb.js" defer></script><script src="/__WCPOS_BASEURL_PLACEHOLDER_1793617518257_1i3p2dhudn4__/_expo/static/js/web/entry-dd93396c82ac7b7f3900b8d121afc35c.js" defer></script>
 </body>
 </html>
