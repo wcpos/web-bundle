@@ -10,8 +10,10 @@ on:
         description: Release tag to promote
         required: true
         type: string
+# One promotion at a time, repo-wide: two tags on the same lane are a read-modify-write
+# on the same KV key, and lanes are few enough that serialising all of them costs nothing.
 concurrency:
-  group: promote-lane-pointer-${{ inputs.tag || github.ref_name }}
+  group: promote-lane-pointer
   cancel-in-progress: false
 jobs:
   promote:
