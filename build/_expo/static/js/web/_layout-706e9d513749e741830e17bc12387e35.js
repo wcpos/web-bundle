@@ -1,0 +1,7 @@
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="a16ff059-e212-432e-a7eb-8d62a10e2a42")}catch(e){}}();
+var _sentryDebugIds,_sentryDebugIdIdentifier;void 0===_sentryDebugIds&&(_sentryDebugIds={});try{var stack=(new Error).stack;stack&&(_sentryDebugIds[stack]="a16ff059-e212-432e-a7eb-8d62a10e2a42",_sentryDebugIdIdentifier="sentry-dbid-a16ff059-e212-432e-a7eb-8d62a10e2a42")}catch(e){}
+var SENTRY_RELEASE;SENTRY_RELEASE={name: "WCPOS", version: "2.0.0"};
+__d(function(g,r,i,a,m,e,d){"use strict";Object.defineProperty(e,'__esModule',{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return l}});var t=r(d[0]);r(d[1]);var n=r(d[2]),s=r(d[3]),o=r(d[4]),c=r(d[5]),u=r(d[6]);function l(){const l=(0,t.c)(6),f=(0,c.useSettingsNavigationItems)(),b=(0,s.useT)();let v,_,y;return l[0]!==b?(v=b("common.settings"),l[0]=b,l[1]=v):v=l[1],l[2]===Symbol.for("react.memo_cache_sentinel")?(_=(0,u.jsx)(n.Slot,{}),l[2]=_):_=l[2],l[3]!==f||l[4]!==v?(y=(0,u.jsx)(o.NavigationAreaLayout,{items:f,indexHref:"/settings",areaLabel:v,testID:"settings-navigation",screenTestID:"settings-screen",barTestID:"settings-bar",leafPagesCarryTitle:!0,children:_}),l[3]=f,l[4]=v,l[5]=y):y=l[5],y}},993,[1019,12,1020,1037,1192,1220,6]);
+
+
+//# debugId=a16ff059-e212-432e-a7eb-8d62a10e2a42
