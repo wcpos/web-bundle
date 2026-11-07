@@ -50,7 +50,8 @@ The WordPress plugin reads exactly one ref per monorepo trunk (owner ruling, 202
 | Monorepo lane | jsDelivr ref | What it is |
 |---|---|---|
 | `next` (in development) | `https://cdn.jsdelivr.net/gh/wcpos/web-bundle@next` | The `next` **branch** of this repo _is_ the dev lane's tag. It is refreshed by the monorepo's `publish-web-bundle.yml` (`bundle_branch=next`), and that publish is the whole deploy — there is no versioned or prerelease tag for `next`. `dev-next.wcpos.com` reads it via `WCPOS_WEB_BUNDLE_REF=next`. |
-| `main` (released) | `https://cdn.jsdelivr.net/gh/wcpos/web-bundle@<major.minor>` — `@1.10` today, `@1.11` once `next` moves to `main` | The plugin derives the ref from its own version; the release train cuts the tag. The `main` **branch** of this repo is staging only and moves nothing a released plugin loads. |
+| `main` (the trunk lane, 2.0 today) | `https://cdn.jsdelivr.net/gh/wcpos/web-bundle@<major.minor>` — `@2.0` today | The plugin derives the ref from its own version; the release train cuts the tag with `scripts/release/tag-web-bundle.sh`. The `main` **branch** of this repo is staging only and moves nothing a released plugin loads. |
+| `1.11.x` (the stable lane) | `https://cdn.jsdelivr.net/gh/wcpos/web-bundle@1.11` | Published by the monorepo's `1.11.x` workflow with `bundle_branch=1.11.x` to the `1.11.x` **branch** of this repo; the tag `v1.11.N` is cut from that commit. One lane per branch: the publish keeps only the previous build's hashed files and jsDelivr refuses every file of a tag whose tree exceeds 50 MB (`v2.0.10`, 2026-11-06, when both lanes still shared `main`). |
 
 The bundle is **path-portable**: every internal asset and chunk URL resolves against a runtime global rather than a baked-in origin, so the same build works from jsDelivr, a local dev server, or inside Electron. The consumer sets:
 

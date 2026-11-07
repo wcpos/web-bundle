@@ -19,8 +19,9 @@ Respect documented author intent and check for companion PRs.
 
 ## Branch lanes
 
-This repo has two permanent trunks:
-- **`main`** — the **stable**, released line (1.9.x patches ship from here).
-- **`next`** — the **in-development** major/minor (1.10, then 1.11, 2.0 …).
+This repo's branches are publish targets, one per monorepo lane, written by the monorepo's `publish-web-bundle.yml` (`bundle_branch=<branch>`), never by hand:
+- **`main`** — the trunk lane (2.0 today); `v2.0.N` tags are cut from its commits.
+- **`1.11.x`** — the stable lane; `v1.11.N` tags are cut from its commits. One lane per branch: the publish keeps only the previous build's hashed files, and jsDelivr refuses every file of a tag whose tree exceeds 50 MB (`v2.0.10`, 2026-11-06, when both lanes shared `main`).
+- **`next`** — the in-development lane; the branch itself is the `@next` jsDelivr ref.
 
-Feature work usually targets `next`; patches to the shipped release target `main`. Never commit directly to either trunk — branch off the correct one in a worktree, and target the PR's base at the same lane. **If it isn't clear which lane a task belongs to, ask "main or next?" before branching, pulling (`git pull origin <lane>`), or opening a PR — don't default to `main`.**
+Code changes (`scripts/`, tests, docs) target `main`. Never commit directly to either trunk — branch off the correct one in a worktree, and target the PR's base at the same lane. **If it isn't clear which lane a task belongs to, ask "main or next?" before branching, pulling (`git pull origin <lane>`), or opening a PR — don't default to `main`.**
