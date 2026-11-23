@@ -1,0 +1,27 @@
+# GitHub tags remain the act of releasing; this workflow only mirrors them to
+# the CDN pointer. tag-web-bundle.sh needs no Cloudflare credentials: they live
+# in Actions secrets. The admin page only rolls a pointer back or kills a lane;
+# it never promotes. The next tag overwrites any recorded rollback.
+name: CDN lane pointer
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  point-lane:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: 24
+      # GitHub's built-in equivalents of github.ref_name / github.sha avoid shell interpolation of tag text.
+      - run: node scripts/cdn-lane-pointer.mjs --tag "$GITHUB_REF_NAME" --commit "$GITHUB_SHA"
+        env:
+          CLOUDFLARE_CDN_TOKEN: ${{ secrets.CLOUDFLARE_CDN_TOKEN }}
